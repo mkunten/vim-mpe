@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MPE Preview</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css">
+    <style>
+      body { box-sizing: border-box; min-width: 200px; max-width: 980px; margin: 0 auto; padding: 45px; }
+      @media (max-width: 767px) { body { padding: 15px; } }
+      .markdown-body { position: relative; }
+      [data-source-line] { transition: background-color 0.1s; border-left: 3px solid transparent; }
+      .sync-highlight { background-color: #fff9c4 !important; border-left: 3px solid #ffd600 !important; }
+    </style>
+  </head>
+  <body class="markdown-body">
+    <div id="content">{{content}}</div>
+    <script>
+      (function() {
+        const ws = new WebSocket('ws://' + location.host + '/ws');
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          if (data.type === 'scroll') {
+            const line = data.line; 
+            document.querySelectorAll('.sync-highlight').forEach(oldEl => {
+              oldEl.classList.remove('sync-highlight');
+            });
+            let el = document.querySelector('[data-source-line="' + line + '"]');
+            let current = line;
+            while (!el && current >= 0) {
+              el = document.querySelector('[data-source-line="' + current + '"]');
+              current--;
+            }
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              el.classList.add('sync-highlight');
+              setTimeout(() => el.classList.remove('sync-highlight'), 600);
+            }
+          } else if (data.type === 'reload') {
+            location.reload();
+          }
+        };
+      })();
+    </script>
+  </body>
+</html>
