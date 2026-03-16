@@ -63,7 +63,7 @@ function! mpe#start() abort
         \ 'MPE_JAR_PATH': g:mpe_jar_path
         \ }
 
-  let s:mpe_job = job_start([g:mpe_node_path, l:server_script, l:file_name], {
+  let s:mpe_job = job_start([g:mpe_node_path, l:server_script], {
         \ 'cwd': l:work_dir,
         \ 'env': l:env,
         \ })
@@ -89,17 +89,17 @@ function! mpe#stop() abort
 endfunction
 
 function! s:open_browser_url() abort
-  let l:url = 'http://localhost:' . g:mpe_port . '/preview/' . expand('%:t')
+  let l:url = 'http://localhost:' . g:mpe_port . '/' . expand('%:t')
   if executable('explorer.exe')
     " for wsl
-    call system('explorer.exe "' . l:url . '"')
+    call system('explorer.exe ' . shellescape(l:url))
   elseif executable('xdg-open')
     call system('xdg-open "' . l:url . '" &')
   endif
 endfunction
 
 function! mpe#sync_line() abort
-  let l:url = 'http://localhost:' . g:mpe_port . '/line'
+  let l:url = 'http://localhost:' . g:mpe_port . '/_api/line'
   let l:data = json_encode({'line': line('.')})
   call job_start(['curl', '-s', '-X', 'POST', '-H',
         \ 'Content-Type: application/json', '-d', l:data, l:url],
@@ -107,6 +107,6 @@ function! mpe#sync_line() abort
 endfunction
 
 function! mpe#reload() abort
-  let l:url = 'http://localhost:' . g:mpe_port . '/reload'
+  let l:url = 'http://localhost:' . g:mpe_port . '/_api/reload'
   call job_start(['curl', '-s', '-X', 'POST', l:url])
 endfunction
