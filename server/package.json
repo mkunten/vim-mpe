@@ -1,6 +1,7 @@
 {
   "name": "mpe-server",
   "version": "1.0.0",
+  "type": "module",
   "description": "Crossnote preview server for Vim",
   "main": "server.js",
   "dependencies": {

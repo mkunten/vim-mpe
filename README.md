@@ -4,15 +4,15 @@ A Vim plugin for Markdown previewing, powered by [Crossnote](https://github.com/
 
 ## Features
 
-- リアルタイムプレビュー (ファイル保存時プレビュー更新)
-- スクロール同期
-- Crossnote Engine: VSCode の Markdown Preview Enhanced (MPE) 対応
-  - PlantUML 対応
+- **Real-time Sync**: ファイル保存時自動リロードおよびカーソル追従
+- **Markdown Preview Enhanced (MPE) Compatible**: Crossnote engine の採用
+  - Mermaid/PlantUML 対応
+- **WSL2 Support**
 
 ## Prerequisites
 
 - Vim 8.1+ (Job functionality)
-- Node.js (crossnote server)
+- Node.js & npm (MPE server)
 - curl
 - java, dot (graphviz) (PlantUML 使用時)
 
@@ -29,17 +29,11 @@ Jetpack 'mkunten/vim-mpe'
 ## Settings
 
 ```vim
-" MPE サーバーで使用するポート番号
-let g:mpe_port = get(g:, 'mpe_port', 3000)`
-" MPE サーバーを起動するためのコマンド (<node> server/server.js)
-let g:mpe_node_path = get(g:, 'mpe_node_path', 'node')
-" vim-mpe のルートパス
-let g:mpe_root = expand('<sfile>:p:h:h')
-" PlantUML の JAR ファイルのダウンロード先
-let g:mpe_jar_url = get(g:, 'mpe_jar_url', 'https://github.com/plantuml/plantuml/releases/download/v1.2026.2/plantuml-1.2026.2.jar')
-" JAR の保存先
-let g:mpe_jar_path = get(g:, 'mpe_jar_path', g:mpe_root . '/server/plantuml.jar')
+" 設定例
+let g:mpe_config = { 'port': 9000, 'jar_path': '/path/to/your_plantuml.jar' }
 ```
+
+※ デフォルトの設定値については `plugin/mpe.vim` `s:default_config` を参照
 
 ※ ほかの MPE の設定についての対応は未定
 
@@ -47,6 +41,8 @@ let g:mpe_jar_path = get(g:, 'mpe_jar_path', g:mpe_root . '/server/plantuml.jar'
 
 | Command | Description |
 |---------|-------------|
-| `:MpeStart` | backend node サーバーを起動し、ブラウザでプレビューを開きます。 |
-| `:MpeStop` | backend node サーバーを終了します。<br/>vim 終了時に自動実行されます。 |
-| `:MpeInstall` | node サーバー環境の初期化、および plantuml.jar の配置を行います。<br/>初回実行時に自動実行されます。 |
+| `:MpeOpen` | ブラウザでプレビューを開きます。MPE サーバーが起動していない場合は起動後開きます。 |
+| `:MpeStart` | MPE サーバーを起動します。 |
+| `:MpeStop` | MPE サーバーを終了します。<br/>vim 終了時に自動実行されます。 |
+| `:MpeStatus` | MPE サーバーの起動状態を表示します。 |
+| `:MpeInstall(!)` | node サーバー環境の初期化、および `plantuml.jar` の配置を行います。<br/>初回実行時に自動実行されます。<br/>`!`: `node_modules` および `plantuml.jar` を削除後、再インストールを行います。 |
