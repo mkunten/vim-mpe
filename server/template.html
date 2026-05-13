@@ -36,10 +36,10 @@
             document.querySelectorAll('.sync-highlight').forEach(oldEl => {
               oldEl.classList.remove('sync-highlight');
             });
-            let el = document.querySelector('[data-source-line="' + line + '"]');
+            let el = document.querySelector(':not(g)[data-source-line="' + line + '"]');
             let current = line;
             while (!el && current >= 0) {
-              el = document.querySelector('[data-source-line="' + current + '"]');
+              el = document.querySelector(':not(g)[data-source-line="' + current + '"]');
               current--;
             }
             if (el) {
